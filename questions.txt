@@ -1,9 +1,11 @@
 Your name
 CSCI-305
 
-10.
+10. It appears that there are some circular references happening in the
+    chain of words, where word x references word y which references word z which references word x,
+    and so on.  The most common phrase I am seeing is 'of the world', which repeats endlessly.
 
-14.
+14. 
 
 15.
 
