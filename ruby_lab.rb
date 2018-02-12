@@ -1,5 +1,5 @@
 
-# !/usr/bin/ruby
+#!/usr/bin/ruby
 ###############################################################
 #
 # CSCI 305 - Ruby Programming Lab
@@ -9,136 +9,166 @@
 #
 ###############################################################
 
-$bigrams = {} # The Bigram data structure
-$name = 'Spencer Cornish'
+$bigrams = Hash.new # The Bigram data structure
+$name = "Spencer Cornish"
 
-$stop_words = %w[
-  a an and by for from in of on or out the to with
+$stop_words = [
+	'a',
+	'an',
+	'and',
+	'by',
+	'for',
+	'from',
+	'in',
+	'of',
+	'on',
+	'or',
+	'out',
+	'the',
+	'to',
+	'with'
 ]
 # matchers for various characters we want to remove, as well as the text after it
 $supr_matchers = [
-  /(feat.*)/i,
-  /(\(.*)/i,
-  /(\[.*)/i,
-  /(\{.*)/i,
-  /(\\.*)/i,
-  /(\/.*)/i,
-  /(_.*)/i,
-  /(-.*)/i,
-  /(:.*)/i,
-  /(\".*)/i,
-  /(\`.*)/i,
-  /(\+.*)/i,
-  /(\=.*)/i,
-  /(\*.*)/i
+	/(feat.*)/i,
+	/(\(.*)/i,
+	/(\[.*)/i,
+	/(\{.*)/i,
+	/(\\.*)/i,
+	/(\/.*)/i,
+	/(_.*)/i,
+	/(-.*)/i,
+	/(:.*)/i,
+	/(\".*)/i,
+	/(\`.*)/i,
+	/(\+.*)/i,
+	/(\=.*)/i,
+	/(\*.*)/i
 ]
 # Assembled regex of the above matchers
 $assembled_reg = Regexp.union($supr_matchers)
 
+
 # function to process each line of a file and extract the song titles
 def process_file(file_name)
-  puts 'Processing File.... '
-  IO.foreach(file_name) do |line|
-    title = cleanup_title(line)
-    add_to_bigrams(title)
-  end
-  puts "Finished. Bigram model built.\n"
+	puts "Processing File.... "
+		IO.foreach(file_name) do |line|
+			title = cleanup_title(line)
+			add_to_bigrams(title)
+		end
+		puts "Finished. Bigram model built.\n"
 end
 
 # Method for cleaning up song titles. Returns a cleaned title
 def cleanup_title(line)
   # Strip off everything but the song title
-  line = line.gsub(/.*<SEP>/i, '')
+	line = line.gsub(/.*<SEP>/i, '')
 
-  # Strip off featured artists, etc.
-  line = line.gsub($assembled_reg, '')
+	# Strip off featured artists, etc.
+	line = line.gsub($assembled_reg, '')
 
-  # Strip out punctuation characters
-  line = line.gsub(/\?|¿|!|¡|\.|;|&|@|%|#|\|/, '')
+	# Strip out punctuation characters
+	line  = line.gsub(/\?|¿|!|¡|\.|;|&|@|%|#|\|/, '')
 
-  # remove non english characters
+	# remove non english characters
   line = line.gsub(/^\x00-\x7F|[0-9]/, '')
 
-  line.downcase
+	return line.downcase
 end
 
 # Adds a title to the bigram hash
 def add_to_bigrams(title)
-  words = title.split(' ')
-  # For each word:
-  iter = 0
-  while iter < words.length
-    curWord = words[iter]
-    nextWord = words[iter + 1]
+	words = title.split(' ')
+	words = words - $stop_words
+	# For each word:
+	iter = 0
+	while iter < words.length
+		curWord = words[iter]
+		nextWord = words[iter + 1]
     #  We have a word pair to store
-    if !curWord.nil? && !nextWord.nil?
-      # The root word already exists in our hash
-      if !$bigrams[curWord].nil?
+		if curWord != nil && nextWord != nil
+			# The root word already exists in our hash
+			if $bigrams[curWord] != nil
         #  Add the word, or increment the existing value
-        !$bigrams[curWord][nextWord].nil? ? $bigrams[curWord][nextWord] += 1 : $bigrams[curWord][nextWord] = 1
-      else
+				$bigrams[curWord][nextWord] != nil ? $bigrams[curWord][nextWord] += 1 : $bigrams[curWord][nextWord] = 1
+			else
         # Add our current word and this pair for the first time
-        $bigrams[curWord] = { nextWord => 1 }
-      end
-    end
+				$bigrams[curWord] = {nextWord => 1}
+			end
+		end
 
-    iter += 1
-  end
+		iter += 1
+	end
 end
 
 # Returns the most commonly repeated word after the input word.
 # Returns nil if none exist.
 def mcw(word)
   # Define a place to store the top match
-  highest_word = ''
-  highest_value = 0
+	highest_word = []
+	highest_value = 0
   # Check and see if we have any matches at all
-  match_hash = $bigrams[word]
-  return nil if match_hash.nil?
+	match_hash = $bigrams[word]
+	if match_hash == nil
+		return nil
+	end
   # search for the highest pair
-  match_hash.each do |key, val|
-    if val > highest_value
-      highest_word = key
-      highest_value = val
-    end
-  end
-  highest_word
+	match_hash.each do |key,val|
+		if val == highest_value
+			highest_word << key
+		end
+		if val > highest_value
+			highest_word = []
+			highest_word << key
+			highest_value = val
+		end
+	end
+	return highest_word.sample
 end
 
 # Returns a title made up of common matches
 def create_title(word)
-  title = word
-  nextWord = word
-  for _ in 0..18
-    # get the next most common word
-    nextWord = mcw(nextWord)
-    # If there isn't a match, the title is done
-    break if nextWord.nil?
-    # Append our new word to the title
-    title = title + ' ' + nextWord
-  end
-  title
+	title = word
+	nextWord = word
+	for _ in 0..18
+     # get the next most common word
+			nextWord = mcw(nextWord)
+      # If there isn't a match, the title is done
+			if nextWord == nil
+				break
+			end
+      # Append our new word to the title
+			if !title.include?(nextWord)
+				title = title + ' ' + nextWord
+			end
+	end
+return title
 end
+
 
 # Executes the program
-def main_loop
-  puts "CSCI 305 Ruby Lab submitted by #{$name}"
+def main_loop()
+	puts "CSCI 305 Ruby Lab submitted by #{$name}"
 
-  if ARGV.empty?
-    puts 'You must specify the file name as the argument.'
-    exit 4
-  end
+	if ARGV.length < 1
+		puts "You must specify the file name as the argument."
+		exit 4
+	end
 
-  # process the file
-  process_file(ARGV[0])
+	# process the file
+	process_file(ARGV[0])
 
-  # Get user input
-  loop do
-    print 'Enter a word [Enter \'q\' to quit]: '
-    option = STDIN.gets.chomp
-    exit 0 if option == 'q'
-    puts create_title(option)
-  end
+	# Get user input
+	while true
+		print 'Enter a word [Enter \'q\' to quit]: '
+		option = STDIN.gets.chomp
+		if option == 'q'
+			exit 0
+		end
+		puts create_title(option)
+	end
 end
 
-main_loop if $PROGRAM_NAME == __FILE__
+if __FILE__==$0
+	main_loop()
+end

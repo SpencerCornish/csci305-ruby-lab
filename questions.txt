@@ -1,26 +1,50 @@
-Your name
+Spencer Cornish
 CSCI-305
 
 10. It appears that there are some circular references happening in the
     chain of words, where word x references word y which references word z which references word x,
     and so on.  The most common phrase I am seeing is 'of the world', which repeats endlessly.
 
-14. 
+14. Many of the titles still devolve into repeating patterns, because oftentimes
+    a word will only have an association with another word, and that word only
+    associates with the original word, for example.
 
-15.
+15. The title I found that terminates in less than 20 words starts with the word
+    'que'. It generated the title 'que te quiero ser feliz navidad negra tomasa'.
 
-16.
+16. The way I chose to solve the repeating word problem is a relatively easy
+    solution. I chose to just remove duplicate words of any kind in the title.
+    This not only solved the problem, it also made sure the song titles were succinct.
+    Another more complex solution would be to go through and do pattern detection, and look
+    for sets of repeating words of a certain length (such as 3 words long) and block
+    the addition of those specific words until we terminate.
 
-19.
+19. First run: 'bob marley is my heart'
+    Second Run:'bob marley purt drive me down road blues night long way you are'
+    The title differs each time because if there are multiple most common words
+    (words with the same number of occurrences that are also the highest occurrence)
+    the mcw method returns a random word from that set. This in turn changes the chain
+    of words that is used to build the title.
 
-20.
+20. My favorite title is 'que te quiero ser feliz navidad negra tomasa', which translates
+    to 'I want to be happy, Black Christmas Tomasa'. I have no idea what that means,
+    but I like it!
 
-21.
+21. I really like the '<conditional> ? <if-true> : <if-false>' pattern, because it
+    allows the developer to greatly shorten code and replace multiple long statements
+    with shorter ones. I also was very surprised to find the Array.sample method,
+    which returns a random element from the array. This is great since it shortens
+    something that is normally much more involved.
 
-22.
+22. I am not a fan of the lack of semicolons, and curly braces. I believe this is
+    because I am just used to them, and it is a hard habit to break.
 
-23.
+23. I really enjoyed it! The only part I didn't enjoy was seeing my code fail
+    tests because I was off by one. If there was a threshold for the tests that
+    aligned with your guidelines, that would be really cool.
 
-24.
+24. 6 hours or so
 
-25.
+25. Yes, it seems like it is a language best suited for the server, but I could
+    be mistaken. So to answer how I would use it, probably for server side scripting,
+    but if there are other better applications, I'm not opposed to any!
