@@ -159,7 +159,7 @@ def main_loop()
 	process_file(ARGV[0])
 
 	# Get user input
-	while true
+	loop do
 		print 'Enter a word [Enter \'q\' to quit]: '
 		option = STDIN.gets.chomp
 		if option == 'q'
